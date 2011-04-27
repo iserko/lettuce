@@ -74,6 +74,7 @@ class Runner(object):
         sys.path.insert(0, base_path)
         self.loader = fs.FeatureLoader(base_path)
         self.verbosity = verbosity
+        world.verbosity = verbosity
         self.scenarios = scenarios and map(int, scenarios.split(",")) or None
 
         sys.path.remove(base_path)
