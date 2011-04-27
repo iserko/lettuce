@@ -25,6 +25,7 @@ scenarios_and_its_fails = {}
 
 def wrt(string):
     sys.stdout.write(string)
+    sys.stdout.flush()
 
 @after.each_step
 def print_scenario_ran(step):
