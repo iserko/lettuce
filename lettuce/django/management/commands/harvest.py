@@ -58,6 +58,9 @@ class Command(BaseCommand):
 
         make_option('--xunit-file', action='store', dest='xunit_file', default=None,
             help='Write JUnit XML to this file. Defaults to lettucetests.xml'),
+
+        make_option('--no-waits', action='store_true', dest='no_waits', default=False,
+                    help="Don't use explicit waits in the tests"),
     )
     def stopserver(self, failed=False):
         raise SystemExit(int(failed))
@@ -107,7 +110,8 @@ class Command(BaseCommand):
 
                 runner = Runner(path, options.get('scenarios'), verbosity,
                                 enable_xunit=options.get('enable_xunit'),
-                                xunit_filename=options.get('xunit_file'))
+                                xunit_filename=options.get('xunit_file'),
+                                no_waits=options.get('no_waits'))
                 result = runner.run()
                 if app_module is not None:
                     registry.call_hook('after_each', 'app', app_module, result)
