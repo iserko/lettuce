@@ -15,9 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import codecs
 import os
 import string
 import sys
+from datetime import datetime
 from lettuce import core
 from lettuce.terrain import after
 
@@ -40,7 +42,7 @@ def print_error_with_exception(s,exception):
     traceback.print_exception(exc_type, exc_value, exc_traceback)
 
 def _get_time_now_for_dir():
-    now = datetime.utcnow()
+    now = datetime.now()
     datedir = now.strftime("%Y-%m-%d-%H-%M")
     path = "/tmp/lyst-lettuce-error-screenshots/"+ datedir +"/"
     return path
