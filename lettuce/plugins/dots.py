@@ -102,7 +102,7 @@ Traceback:
 %s
 """ % (step.sentence,
        step.scenario.name,
-       step.scenario.feature_name,
+       step.scenario.feature.name,
        step.scenario.with_file,
        world.browser.current_url,
        filename_src,
