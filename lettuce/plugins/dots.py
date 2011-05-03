@@ -21,7 +21,7 @@ import string
 import sys
 import unicodedata
 from datetime import datetime
-from lettuce import core
+from lettuce import core, world
 from lettuce.terrain import after
 
 failed_scenarios = []
