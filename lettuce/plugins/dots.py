@@ -85,7 +85,7 @@ def print_scenario_ran(step):
                 step.scenario.name + "/" + \
                 step.scenario.feature.name + "/"
             _mkdir_path(path)
-            filename_base = path + _remove_disallowed_filename_chars(sentence)
+            filename_base = path + _remove_disallowed_filename_chars(step.sentence)
             filename_pic = filename_base + ".png"
             filename_src = filename_base + ".html"
             _write_to_file(world.browser.get_page_source(), filename_src)
