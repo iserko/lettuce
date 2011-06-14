@@ -17,6 +17,7 @@
 
 import re
 import time
+import string
 
 def escape_if_necessary(what):
     what = unicode(what)
@@ -86,7 +87,7 @@ def dicts_to_string(dicts, order):
     for key in keys_and_sizes:
         for data in dicts:
             current_size = keys_and_sizes[key]
-            value = unicode(data[key])
+            value = unicode(data.get(key, ''))
             size = getlen(value)
             if size > current_size:
                 keys_and_sizes[key] = size
@@ -101,7 +102,7 @@ def dicts_to_string(dicts, order):
     for data in dicts:
         names = []
         for key in order:
-            value = data[key]
+            value = data.get(key, '')
             size = keys_and_sizes[key]
             names.append(enline(u" %s" % rfill(value, size)))
 
@@ -148,3 +149,74 @@ def parse_multiline(lines):
                 line = line[:-1]
             multilines.append(line)
     return u'\n'.join(multilines)
+
+
+def extract_tags_from_line(given_line):
+    """returns tags_array if given_line contains tags, else None"""
+    line = string.rstrip(given_line)
+    tags = []
+    if re.match("\s*?\@", line):
+        tags = [tag for tag in re.split("\s*\@", line) if len(tag) > 0]
+    if len(tags) == 0 or [tag for tag in tags if string.find(tag, " ") != -1]:
+        return None
+    return tags
+
+
+def consume_tags_lines(lines, tags):
+    """consumes lines from start of given set of lines and
+       populates tags array,
+       stops when run out of lines that are tag lines"""
+    while True:
+        line = lines[0]
+        tags_on_lines = extract_tags_from_line(line)
+        if tags_on_lines:
+            tags.extend(tags_on_lines)
+            lines.pop(0)
+        else:
+            break
+
+def consume_scenario(lines, scenario_prefix):
+    """return string of scenario text
+       and reduce lines array by that much"""
+    sep = unicode(scenario_prefix)
+    regex = re.compile(escape_if_necessary(sep),  re.UNICODE | re.M | re.I)
+    scenario_lines = []
+    # Optional first lines are tags, is part of the scenario
+    while len(lines) > 0:
+        if extract_tags_from_line(lines[0]):
+            scenario_lines.append(lines.pop(0))
+        break
+    # First line must be scenario_prefix
+    if regex.match(lines[0]):
+        scenario_lines.append(lines.pop(0))
+    else:
+        raise AssertionError("expecting scenario, at line [" + str(lines[0]) + "]")
+    
+    scenario_lines.extend(get_lines_till_next_scenario(lines, scenario_prefix))
+    return unicode("\n".join(scenario_lines))
+
+def get_lines_till_next_scenario(lines, scenario_prefix):
+    """returns array of lines up till next scenario block"""
+    sep = unicode(scenario_prefix)
+    regex = re.compile(escape_if_necessary(sep),  re.UNICODE | re.M | re.I)
+    scenario_lines = []
+    in_multi_line_string = False
+    # Scan till hit tags line or (next) scenario_prefix
+    while len(lines) > 0:
+        line = lines[0]
+        if "\"\"\"" in line:
+            in_multi_line_string = not in_multi_line_string
+        if not in_multi_line_string:
+            if regex.match(line) or extract_tags_from_line(line):
+                break
+        scenario_lines.append(lines.pop(0))
+    return scenario_lines
+
+def split_scenarios(lines, scenario_prefix):
+    """returns array of strings, one per scenario"""
+    scenario_strings = []
+    while len(lines) > 0:
+        scenario_string = consume_scenario(lines, scenario_prefix)
+        if scenario_string:
+            scenario_strings.append(scenario_string)
+    return scenario_strings

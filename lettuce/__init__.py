@@ -20,11 +20,12 @@ release = 'barium'
 
 import os
 import sys
+import traceback
 from datetime import datetime
 
 from lettuce import fs
 
-from lettuce.core import Feature, TotalResult
+from lettuce.core import Feature, TotalResult, RunController
 
 from lettuce.terrain import after
 from lettuce.terrain import before
@@ -62,6 +63,7 @@ class Runner(object):
     """
     def __init__(self, base_path, scenarios=None, verbosity=0,
                  enable_xunit=False, xunit_filename=None,
+                 run_controller=None,
                  no_waits=False):
         """ lettuce.Runner will try to find a terrain.py file and
         import it from within `base_path`
@@ -77,6 +79,7 @@ class Runner(object):
         self.verbosity = verbosity
         world.verbosity = verbosity
         world.no_waits = no_waits
+        self.run_controller = run_controller or RunController()
         self.scenarios = scenarios and map(int, scenarios.split(",")) or None
 
         sys.path.remove(base_path)
@@ -126,9 +129,14 @@ class Runner(object):
         try:
             for filename in features_files:
                 feature = Feature.from_file(filename)
-                results.append(feature.run(self.scenarios))
+                results.append(feature.run(self.scenarios, self.run_controller))
         except exceptions.LettuceSyntaxError, e:
             sys.stderr.write(e.msg)
+            failed = True
+        except:
+            e = sys.exc_info()[1]
+            print "Died with "+str(e)
+            traceback.print_exc()
             failed = True
 
         finally:
