@@ -18,7 +18,6 @@ import os
 import platform
 import struct
 
-
 def get_size():
     if platform.system() == "Windows":
         size = get_terminal_size_win()
@@ -29,7 +28,6 @@ def get_size():
         size = (1, 1)
 
     return size
-
 
 def get_terminal_size_win():
     #Windows specific imports
@@ -43,21 +41,20 @@ def get_terminal_size_win():
     res = windll.kernel32.GetConsoleScreenBufferInfo(h, csbi)
 
     if res:
-        (bufx, bufy, curx, cury, wattr, left, top, right, bottom,
-                maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
+        import struct
+        (bufx, bufy, curx, cury, wattr,
+         left, top, right, bottom, maxx, maxy) = struct.unpack("hhhhHhhhhhh", csbi.raw)
         sizex = right - left + 1
         sizey = bottom - top + 1
-    else:  # can't determine actual size - return default values
-        sizex, sizey = 80, 25
+    else:
+        sizex, sizey = 80, 25 # can't determine actual size - return default values
 
     return sizex, sizey
 
 
 def get_terminal_size_unix():
     # Unix/Posix specific imports
-    import fcntl
-    import termios
-
+    import fcntl, termios
     def ioctl_GWINSZ(fd):
         try:
             cr = struct.unpack('hh', fcntl.ioctl(fd, termios.TIOCGWINSZ,

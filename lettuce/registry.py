@@ -21,62 +21,78 @@ import traceback
 world = threading.local()
 world._set = False
 
+class CleanableDict(dict):
+    def clear(self):
+        for k in self.keys():
+            del self[k]
 
-def _function_matches(one, other):
-    return (one.func_code.co_filename == other.func_code.co_filename and
-            one.func_code.co_firstlineno == other.func_code.co_firstlineno)
+class CallbackDict(CleanableDict):
+    def _function_matches(self, one, other):
+        params = 'co_filename', 'co_firstlineno'
+        matches = list()
 
+        for param in params:
+            one_got = getattr(one.func_code, param)
+            other_got = getattr(other.func_code, param)
+            matches.append(one_got == other_got)
 
-class CallbackDict(dict):
+        return all(matches)
+
     def append_to(self, where, when, function):
-        if not any(_function_matches(o, function) for o in self[where][when]):
+        found = False
+
+        for other_function in self[where][when]:
+            if self._function_matches(other_function,function):
+                found = True
+
+        if not found:
             self[where][when].append(function)
 
     def clear(self):
         for name, action_dict in self.items():
             for callback_list in action_dict.values():
-                callback_list[:] = []
+                while callback_list:
+                    callback_list.pop()
 
 
-STEP_REGISTRY = {}
+STEP_REGISTRY = CleanableDict()
 CALLBACK_REGISTRY = CallbackDict(
     {
         'all': {
-            'before': [],
-            'after': [],
+            'before': list(),
+            'after': list()
         },
         'step': {
-            'before_each': [],
-            'after_each': [],
+            'before_each': list(),
+            'after_each': list()
         },
         'scenario': {
-            'before_each': [],
-            'after_each': [],
-            'outline': [],
+            'before_each': list(),
+            'after_each': list(),
+            'outline': list()
         },
         'feature': {
-            'before_each': [],
-            'after_each': [],
+            'before_each': list(),
+            'after_each': list()
         },
         'app': {
-            'before_each': [],
-            'after_each': [],
+            'before_each': list(),
+            'after_each': list()
         },
         'harvest': {
-            'before': [],
-            'after': [],
+            'before': list(),
+            'after': list()
         },
         'handle_request': {
-            'before': [],
-            'after': [],
+            'before': list(),
+            'after': list()
         },
         'runserver': {
-            'before': [],
-            'after': [],
+            'before': list(),
+            'after': list()
         },
-    },
+    }
 )
-
 
 def call_hook(situation, kind, *args, **kw):
     for callback in CALLBACK_REGISTRY[kind][situation]:
@@ -86,7 +102,6 @@ def call_hook(situation, kind, *args, **kw):
             traceback.print_exc()
             print
             sys.exit(2)
-
 
 def clear():
     STEP_REGISTRY.clear()

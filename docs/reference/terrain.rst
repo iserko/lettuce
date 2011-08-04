@@ -3,7 +3,7 @@
 the "terrain"
 =============
 
-Terrain is a "pun" with lettuce and its "living place", its about
+terrain is a "pun" with lettuce and its "living place", its about
 setup and teardown, and general hacking on your lettuce tests.
 
 .. _terrain-py:
@@ -11,23 +11,23 @@ setup and teardown, and general hacking on your lettuce tests.
 terrain.py
 ~~~~~~~~~~
 
-By convention lettuce tries do load a file called ``terrain.py`` located
+by convention lettuce tries do load a file called `terrain.py` located
 at the current directory.
 
-Think at this file as a global setup place, there you can setup global
+think at this file as a global setup place, there you can setup global
 hooks, and put things into lettuce "world".
 
 .. Note::
 
-   You can also set a ``terrain.py`` file within the root of your
-   Django_ project, when running the ``python manage.py harvest``
+   You can also set a `terrain.py` file within the root of your
+   Django_ project, when running the `python manage.py harvest`
    command, lettuce will load it. See more at
-   :ref:`the-django-command`.
+   :ref:`the-django-command`
 
 in practice
 ^^^^^^^^^^^
 
-Try out this file layout:
+try out this file layout:
 
 .. highlight:: bash
 
@@ -39,7 +39,7 @@ Try out this file layout:
                 - the-file-which-holds-step-definitions.py
                 - terrain.py
 
-Then add some setup at ``terrain.py`` and run lettuce
+then add some setup at `terrain.py` and run lettuce
 
 .. highlight:: bash
 
@@ -48,23 +48,22 @@ Then add some setup at ``terrain.py`` and run lettuce
    user@machine:~/projects/some-project$ lettuce
 
 
-And notice ``terrain.py`` will be loaded before anything
+and notice `terrain.py` will be loaded before anything
 
 .. _lettuce-world:
-
 world
 ~~~~~
 
-For the sake of turning easier and funnier to write tests, lettuce
+for the sake of turning easier and funnier to write tests, lettuce
 "violates" some principles of good design in python, such as avoiding
 implicity and using global stuff.
 
-The "world" concept of lettuce is mostly about "global stuff".
+the "world" concept of lettuce is mostly about "global stuff".
 
 in practice
 ^^^^^^^^^^^
 
-Imagine a file located somewhere that will be imported by your
+imagine a file located somewhere that will be imported by your
 application before lettuce start running tests:
 
 .. highlight:: python
@@ -75,7 +74,7 @@ application before lettuce start running tests:
 
    world.some_variable = "yay!"
 
-So that, within some step file you could use things previously set on ``world``:
+so that, within some step file you could use things previously set on `world`:
 
 
 .. doctest::
@@ -87,7 +86,7 @@ So that, within some step file you could use things previously set on ``world``:
        assert world.some_variable == value
 
 
-And the feature could have something like:
+and the feature could have something like:
 
 .. highlight:: ruby
 
@@ -100,9 +99,9 @@ And the feature could have something like:
 world.absorb
 ^^^^^^^^^^^^
 
-It can be really useful to put functions and/or classes in **lettuce.world**
+it can be really useful to put functions and/or classes in **lettuce.world**
 
-For example:
+for example:
 
 .. highlight:: python
 
@@ -117,12 +116,12 @@ For example:
 
    world.my_project_wide_function()
 
-But as you can notice, as your project grows, there can be a lot of
+but as you can notice, as your project grows, there can be a lot of
 repetitive lines, not DRY at all :(
 
-In order to avoid that, lettuce provides a "absorb" decorator that lives within "world"
+in order to avoid that, lettuce provides a "absorb" decorator that lives within "world"
 
-Let's see it in action:
+let's see it in action:
 
 .. highlight:: python
 
@@ -190,23 +189,23 @@ For those cases after **"absorbing"** something, world can also **"spew"** it.
 hooks
 ~~~~~
 
-Lettuce has hooks that are called sequentially before and after each
+lettuce has hooks that are called sequentially before and after each
 action
 
-Presented as python decorators, it can be used to take any actions you find useful.
+presented as python decorators, it can be used to take any actions you find useful.
 
-For example, you can set a browser driver at :ref:`lettuce-world`, and
+for example, you can set a browser driver at :ref:`lettuce-world`, and
 close the connection after all, populate database with test mass or
 anything you want, for example
 
-Let's see it from outside in
+let's see it from outside in
 
 @before.all
 ^^^^^^^^^^^
 
-This hook is ran before lettuce look for and load feature files
+this hook is ran before lettuce look for and load feature files
 
-The decorated function takes **NO** parameters
+the decorated function takes **NO** parameters
 
 .. highlight:: python
 
@@ -222,10 +221,10 @@ The decorated function takes **NO** parameters
 @after.all
 ^^^^^^^^^^
 
-This hook is ran after lettuce run all features, scenarios and
+this hook is ran after lettuce run all features, scenarios and
 steps
 
-The decorated function takes a :ref:`total-result` as parameter, so
+the decorated function takes a :ref:`total-result` as parameter, so
 that you can use the result statistics somehow
 
 .. highlight:: python
@@ -245,9 +244,9 @@ that you can use the result statistics somehow
 @before.each_feature
 ^^^^^^^^^^^^^^^^^^^^
 
-This hook is ran before lettuce run each feature
+this hook is ran before lettuce run each feature
 
-The decorated function takes a :ref:`feature-class` as parameter, so
+the decorated function takes a :ref:`feature-class` as parameter, so
 that you can use it to fetch scenarios and steps inside.
 
 
@@ -267,7 +266,7 @@ that you can use it to fetch scenarios and steps inside.
 @after.each_feature
 ^^^^^^^^^^^^^^^^^^^
 
-This hooks behaves in the same way @before.each_feature does, except
+this hooks behaves in the same way @before.each_feature does, except
 by the fact that its ran *after* lettuce run the feature.
 
 .. highlight:: python
@@ -283,9 +282,9 @@ by the fact that its ran *after* lettuce run the feature.
 @before.each_scenario
 ^^^^^^^^^^^^^^^^^^^^^
 
-This hook is ran before lettuce run each scenario
+this hook is ran before lettuce run each scenario
 
-The decorated function takes a :ref:`scenario-class` as parameter, so
+the decorated function takes a :ref:`scenario-class` as parameter, so
 that you can use it to fetch steps inside.
 
 
@@ -303,7 +302,7 @@ that you can use it to fetch steps inside.
 @after.each_scenario
 ^^^^^^^^^^^^^^^^^^^^
 
-This hooks behaves in the same way @before.each_scenario does, except
+this hooks behaves in the same way @before.each_scenario does, except
 by the fact that its ran *after* lettuce run the scenario.
 
 .. highlight:: python
@@ -319,9 +318,9 @@ by the fact that its ran *after* lettuce run the scenario.
 @before.each_step
 ^^^^^^^^^^^^^^^^^
 
-This hook is ran before lettuce run each step
+this hook is ran before lettuce run each step
 
-The decorated function takes a :ref:`step-class` as parameter, so
+the decorated function takes a :ref:`step-class` as parameter, so
 that you can use it to fetch tables and so.
 
 .. highlight:: python
@@ -340,7 +339,7 @@ that you can use it to fetch tables and so.
 @after.each_step
 ^^^^^^^^^^^^^^^^
 
-This hooks behaves in the same way @before.each_step does, except
+this hooks behaves in the same way @before.each_step does, except
 by the fact that its ran *after* lettuce run the step.
 
 .. highlight:: python
@@ -357,17 +356,17 @@ by the fact that its ran *after* lettuce run the step.
 django-specific hooks
 ~~~~~~~~~~~~~~~~~~~~~
 
-Since lettuce officially supports Django_, there are a few specific hooks that help on setting up your test suite on it.
+since lettuce officially suports Django_, there are a few specific hooks that help on setting up your test suite on it.
 
 @before.harvest
 ^^^^^^^^^^^^^^^
 
-This hook is ran before lettuce start harvesting your Django tests. It
+this hook is ran before lettuce start harvesting your Django tests. It
 can be very useful for setting up browser drivers (such as selenium),
 before all tests start to run on Django.
 
-The decorated function takes a dict with the local variables within
-the ``harvest`` management command.
+the decorated function takes a dict with the local variables within
+the `harvest` management command.
 
 .. doctest::
 
@@ -384,11 +383,11 @@ the ``harvest`` management command.
 @after.harvest
 ^^^^^^^^^^^^^^
 
-This hook is ran right after lettuce finish harvesting your Django
+this hook is ran right after lettuce finish harvesting your Django
 tests. It can be very useful for shutting down previously started
 browser drivers (see the example above).
 
-The decorated function takes a list of :ref:`total-result` objects.
+the decorated function takes a list of :ref:`total-result` objects.
 
 .. doctest::
 
@@ -401,9 +400,9 @@ The decorated function takes a list of :ref:`total-result` objects.
 @before.each_app
 ^^^^^^^^^^^^^^^^
 
-This hook is ran before lettuce run each Django_ app.
+this hook is ran before lettuce run each Django_ app.
 
-The decorated function takes the python module that corresponds to the current app.
+the decorated function takes the python module that corresponds to the current app.
 
 .. doctest::
 
@@ -418,13 +417,13 @@ The decorated function takes the python module that corresponds to the current a
 @after.each_app
 ^^^^^^^^^^^^^^^
 
-This hook is ran after lettuce run each Django_ app.
+this hook is ran after lettuce run each Django_ app.
 
-The decorated function takes two arguments:
+the decorated function takes two arguments:
 
 * the python module that corresponds to the current app.
 * a :ref:`total-result` as parameter, so that you can use the result
-  statistics somehow
+statistics somehow
 
 .. doctest::
 
@@ -441,9 +440,9 @@ The decorated function takes two arguments:
 @before.runserver and @after.runserver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-These hooks are ran right before, and after lettuce starts up the built-in http server.
+these hooks are ran right before, and after lettuce starts up the builtin http server.
 
-The decorated function takes a ``lettuce.django.server.ThreadedServer`` object.
+the decorated function takes a `lettuce.django.server.ThreadedServer` object.
 
 .. doctest::
 
@@ -464,12 +463,12 @@ The decorated function takes a ``lettuce.django.server.ThreadedServer`` object.
 @before.handle_request and @after.handle_request
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-These hooks are ran right before, and after lettuce's built-in HTTP server responds to a request.
+these hooks are ran right before, and after lettuce's builtin HTTP server responds to a request.
 
-Both decorated functions takes these two arguments:
+both decorated functions takes these two arguments:
 
-* a ``django.core.servers.basehttp.WSGIServer`` object.
-* a ``lettuce.django.server.ThreadedServer`` object.
+* a `django.core.servers.basehttp.WSGIServer` object.
+* a `lettuce.django.server.ThreadedServer` object.
 
 .. doctest::
 
@@ -486,7 +485,7 @@ Both decorated functions takes these two arguments:
        socket_object, (client_address, size) = httpd.get_request()
        print "I've just finished to respond to the client %s" % client_address
 
-.. warning:: all the ``handle_request`` hooks are run within a python
+.. warning:: all the `handle_request` hooks are run within a python
    thread. If something went wrong within a calback, lettuce can get
    stuck.
 

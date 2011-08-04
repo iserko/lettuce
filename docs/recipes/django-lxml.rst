@@ -6,7 +6,7 @@ Web development fun with Lettuce and Django
 Django_ is a awesome web framework, very mature, aims for simplicity
 and the best of all: it's fun to use it.
 
-To make it even more fun, lettuce has built-in support for Django.
+To make it even more fun, lettuce has builtin support to Django.
 
 Getting started
 ~~~~~~~~~~~~~~~
@@ -14,7 +14,7 @@ Getting started
 1. install the lettuce django app
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Pick up any Django project, and add ``lettuce.django`` in its
+pick up any django project, and add ``lettuce.django`` in its
 ``settings.py`` configuration file:
 
 ::
@@ -30,13 +30,13 @@ Pick up any Django project, and add ``lettuce.django`` in its
        'lettuce.django', # this guy will do the job :)
    )
 
-Considering the configuration above, let's say we want to write tests
-for the ``my_app`` django application.
+considering the configuration above, let's say we want to write tests
+to ``my_app`` django application.
 
 2. create the feature directories
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Lettuce will look for a ``features`` folder inside every installed app:
+lettuce will look for a ``features`` folder inside every installed app:
 
 ::
 
@@ -106,7 +106,7 @@ Lettuce will look for a ``features`` folder inside every installed app:
 4. run the tests
 ^^^^^^^^^^^^^^^^
 
-Once you install the ``lettuce.django`` app, the command ``harvest`` will be available:
+once you install the ``lettuce.django`` app, the command ``harvest`` will be available:
 
 .. highlight:: bash
 
@@ -117,10 +117,10 @@ Once you install the ``lettuce.django`` app, the command ``harvest`` will be ava
 5. specifying feature files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``harvest`` command accepts a path to feature files, in order to run
+the `harvest` command accepts a path to feature files, in order to run
 only the features you want.
 
-Example:
+example:
 
 .. highlight:: bash
 
@@ -131,8 +131,8 @@ Example:
 6. grab actual example code
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In order to assure that lettuce integrate well with Django, it have a
-set of integration tests, there are a actual Django project running
+In order to assure that lettuce integrate well with django, it have a
+set of integration tests, there are a actual django project running
 with lettuce.
 
 You can grab the code at the alfaces_ folder of lettuce git repository
@@ -146,17 +146,17 @@ can user tools like twill_, selenium_, webdriver_ and windmill_
 red-tape-less builtin server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lettuce cleverly runs an instance of the built-in Django HTTP server in
-the background. It tries to bind the HTTP server at ``localhost:8000``
-but if the port is busy, it keeps trying to run in higher ports: 8001,
-8002 and so on until it reaches the maximum port number 65535.
+Lettuce cleverly runs the a instance of django builtin http server in
+background, it tries to bind the HTTP server at localhost:8000 but if
+the port is busy, it keeps trying to run in higher ports: 8001, 8002
+and so on until it reaches the max port number 65535
 
 .. note::
 
-   You can override the default starting port from "8000" to any other
+   you can override the default starting port from "8000" to any other
    port you want.
 
-   To do so, refer to "running the HTTP server in other port than
+   to do so, refer to "running the HTTP server in other port than
    8000" below.
 
 So that you can use browser-based tools such as those listed above to
@@ -164,16 +164,16 @@ access Django.
 
 .. warning::
 
-   When running the http server, lettuce sets the environment
+   when running the http server, lettuce sets the environment
    variables SERVER_NAME and SERVER_PORT. It was brought for a GAE_
    issue. If it can possibly bring any errors, be warned.
 
 figure out django urls
 ~~~~~~~~~~~~~~~~~~~~~~
 
-As the Django HTTP server can be running in any port within the range
+As django http server can be running in any port within the range
 8000 - 65535, it could be hard to figure out the correct URL for your
-project, right?
+project, right ?
 
 Wrong!
 
@@ -196,7 +196,7 @@ Lettuce is here for you. Within your steps you can use the
 what does ``django_url`` do ?!?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-It prepends a Django-internal URL with the HTTP server address.
+It prepends a django-internal url with the HTTP server address.
 
 In other words, if lettuce binds the http server to localhost:9090 and
 you call ``django_url`` with ``"/admin/login"``:
@@ -208,7 +208,7 @@ you call ``django_url`` with ``"/admin/login"``:
     from lettuce.django import django_url
     django_url("/admin/login")
 
-It returns:
+it returns:
 
 .. highlight:: python
 
@@ -219,13 +219,13 @@ It returns:
 terrain also available in django projects
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-At this point you probably know how :ref:`terrain-py` works, and it
-also works with Django projects.
+at this point you probably know how :ref:`terrain-py` works, and it
+also works with django projects.
 
-You can setup environment and stuff like that within a ``terrain.py``
-file located at the root of your Django project.
+you can setup environment and stuff like that within a ``terrain.py``
+file located at the root of your django project.
 
-Taking the very first example of this documentation page, your Django
+taking the very first example of this documentation page, your django
 project layout would like like this:
 
 ::
@@ -249,18 +249,18 @@ project layout would like like this:
                     - second.feature
                     - many_steps.py
 
-Notice the ``terrain.py`` file at the project root, there you can
+notice the ``terrain.py`` file at the project root, there you can
 populate the :ref:`lettuce-world` and organize your features and steps
 with it :)
 
-Running without HTTP server
+running without HTTP server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sometimes you may just do not want to run Django's built-in HTTP server
+sometimes you may just do not want to run Django's builtin HTTP server
 running in background, in those cases all you need to do is run the
-``harvest`` command with the ``--no-server`` or ``-S`` option.
+`harvest` command with the `--no-server` or `-S` option.
 
-Example:
+example:
 
 .. highlight:: bash
 
@@ -272,12 +272,12 @@ Example:
 running the HTTP server in other port than 8000
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you face the problem of having lettuce running on port 8000, you
+if you face the problem of having lettuce running on port 8000, you
 can change that behaviour.
 
-Before running the server, lettuce will try to read the setting ``LETTUCE_SERVER_PORT`` which **must** be a **integer**
+Before running the server, lettuce will try to read the setting `LETTUCE_SERVER_PORT` which **must** be a **integer**
 
-Example:
+example:
 
 .. highlight:: python
 
@@ -296,7 +296,7 @@ In order to run tests against the nearest configuration of production,
 lettuce sets up settings.DEBUG=False
 
 However, for debug purposes one can face a misleading HTTP 500 error without traceback in Django.
-For those cases lettuce provides the ``--debug-mode`` or ``-d`` option.
+For those cases lettuce provides the `--debug-mode` or `-d` option.
 
 .. highlight:: bash
 
@@ -308,11 +308,11 @@ For those cases lettuce provides the ``--debug-mode`` or ``-d`` option.
 running only the specified scenarios
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can also specify the index of the scenarios you want to run
-through the command line, to do so, run with ``--scenarios`` or ``-s``
+you can also specify the index of the scenarios you want to run
+through the command line, to do so, run with `--scenarios` or `-s`
 options followed by the scenario numbers separated by commas.
 
-For example, let's say you want to run the scenarios 4, 7, 8 and 10:
+for example, let's say you want to run the scenarios 4, 7, 8 and 10:
 
 .. highlight:: bash
 
@@ -321,8 +321,8 @@ For example, let's say you want to run the scenarios 4, 7, 8 and 10:
    python manage.py harvest --scenarios=4,7,8,10
    python manage.py harvest -s 4,7,8,10
 
-to run or not to run? That is the question!
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+to run or not to run ? That is the question !
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 During your development workflow you may face two situations:
 
@@ -331,7 +331,7 @@ running tests from just certain apps
 
 Lettuce takes a comma-separated list of app names to run tests against.
 
-For example, the command below would run ONLY the tests within the apps ``myapp`` and ``foobar``:
+For example, the command below would run ONLY the tests within the apps `myapp` and `foobar`:
 
 .. highlight:: bash
 
@@ -343,7 +343,7 @@ For example, the command below would run ONLY the tests within the apps ``myapp`
 
    python manage.py harvest --a  myapp,foobar
 
-You can also specify it at ``settings.py`` so that you won't need to type the same command-line parameters all the time:
+you can also specify it at `settings.py` so that you won't need to type the same command-line parameters all the time:
 
 .. highlight:: python
 
@@ -368,7 +368,7 @@ running tests from all apps, except by some
 
 Lettuce takes a comma-separated list of app names which tests must NOT be ran.
 
-For example, the command below would run ALL the tests BUT those within the apps ``another_app`` and ``foobar``:
+For example, the command below would run ALL the tests BUT those within the apps `another_app` and `foobar`:
 
 .. highlight:: bash
 
@@ -376,7 +376,7 @@ For example, the command below would run ALL the tests BUT those within the apps
 
    python manage.py harvest --avoid-apps=another_app,foobar
 
-You can also specify it at ``settings.py`` so that you won't need to type the same command-line parameters all the time:
+you can also specify it at `settings.py` so that you won't need to type the same command-line parameters all the time:
 
 .. highlight:: python
 

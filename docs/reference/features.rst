@@ -12,7 +12,7 @@ to read :ref:`the feature tutorial <tutorial-simple>` for a
 introduction.
 
 In order to exemplify the usage of attributes and methods below, let's
-consider that there is a feature in a file called ``some.feature``
+consider that there is a feature in a file called `some.feature`
 
 .. highlight:: ruby
 
@@ -32,14 +32,13 @@ consider that there is a feature in a file called ``some.feature``
         Then I should be happy
 
 .. _feature-class:
-
 Feature
 ~~~~~~~
 
 Feature.name
-^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
-A string containing the name of the feature
+a string containing the name of the feature
 
 .. highlight:: python
 
@@ -50,9 +49,9 @@ A string containing the name of the feature
 Feature.scenarios
 ^^^^^^^^^^^^^^^^^
 
-A list of scenario objects
+a list of scenario objects
 
-The attribute ``scenarios`` could be used as follows
+the attribute `scenarios` could be used as follows
 
 .. highlight:: python
 
@@ -63,11 +62,11 @@ The attribute ``scenarios`` could be used as follows
 Feature.described_at
 ^^^^^^^^^^^^^^^^^^^^
 
-A FeatureDescription object, has the file and line which the feature
+a FeatureDescription object, has the file and line which the feature
 was described. Lettuce uses it to output those metadata.
 
 
-The attribute ``described_at`` could be used as follows
+the attribute `described_at` could be used as follows
 
 ::
 
@@ -83,13 +82,13 @@ The attribute ``described_at`` could be used as follows
 Feature.max_length
 ^^^^^^^^^^^^^^^^^^
 
-A property that calculates the maximum length of all lines that built
-the feature.
+A property that calculates the max length of all lines that built the
+feature.
 
 Mostly used by shell output to find out where to print the feature
 description.
 
-Example:
+example:
 
 ::
 
@@ -98,16 +97,16 @@ Example:
 Feature.get_head
 ^^^^^^^^^^^^^^^^
 
-Does represent the feature with its first representation in current
+does represent the feature with its first representation in current
 language followed by a colon and the feature name.
 
-Example:
+example:
 
 ::
 
     feature.get_head() == 'Feature: some feature'
 
-But if the same feature would written in Brazilian Portuguese, for example:
+but if the same feature would written in brazillian portuguese, for example:
 
 .. highlight:: ruby
 
@@ -125,58 +124,56 @@ But if the same feature would written in Brazilian Portuguese, for example:
           Cenário: ...
             ...
 
-Then, ``Feature.get_head()`` would give:
+then, `Feature.get_head()` would give:
 
 ::
 
     feature.get_head() == 'Funcionalidade: alguma funcionalidade'
 
 .. _total-result:
-
 TotalResult
 ~~~~~~~~~~~
 
 TotalResult.features_ran
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-Integer, the total of features ran
+integer, the total of features ran
 
 TotalResult.features_passed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Integer, the total of features passed
+integer, the total of features passed
 
 TotalResult.scenarios_ran
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Integer, the total of scenarios ran
+integer, the total of scenarios ran
 
 TotalResult.scenarios_passed
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Integer, the total of scenarios passed
+integer, the total of scenarios passed
 
 TotalResult.steps
 ^^^^^^^^^^^^^^^^^
 
-Integer, the number of steps that were supposed to run
+integer, the number of steps that were supposed to run
 
 TotalResult.proposed_definitions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A list of :ref:`step-class` that have no :ref:`step-definition`
+a list of :ref:`step-class` that have no :ref:`step-definition`
 
 .. _scenario-class:
-
 Scenario
 ~~~~~~~~
 
 Scenario.steps
 ^^^^^^^^^^^^^^
 
-A list of scenario objects
+a list of scenario objects
 
-The attribute ``scenarios`` could be used as follows
+the attribute `scenarios` could be used as follows
 
 .. highlight:: python
 
@@ -185,14 +182,13 @@ The attribute ``scenarios`` could be used as follows
     scenario.steps[0].sentence == 'try out something'
 
 .. _step-class:
-
 Step
 ~~~~
 
 Step.sentence
 ^^^^^^^^^^^^^
 
-The string that represents the step
+the string that represents the step
 
 .. highlight:: python
 
@@ -201,11 +197,10 @@ The string that represents the step
     step.sentence == 'Given I show lettuce running'
 
 .. _step-definition:
-
 step definition
 ~~~~~~~~~~~~~~~
 
-A decorator that can be used on any python function, takes a regex string as parameter, so that the function can me matched against steps.
+a decorator that can be used on any python function, takes a regex string as parameter, so that the function can me matched against steps.
 
 
 .. highlight:: python

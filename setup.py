@@ -16,10 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
-import sys
 from lettuce import version
 from setuptools import setup
-
 
 def get_packages():
     # setuptools can't do the job :(
@@ -30,11 +28,6 @@ def get_packages():
 
     return packages
 
-required_modules = []
-
-if sys.version_info[:2] < (2, 6):
-    required_modules.append('multiprocessing')
-
 setup(name='lettuce',
     version=version,
     description='Behaviour Driven Development for python',
@@ -42,8 +35,8 @@ setup(name='lettuce',
     author_email='gabriel@nacaolivre.org',
     url='http://github.com/gabrielfalcao/lettuce',
     packages=get_packages(),
-    install_requires=required_modules,
-    entry_points={
-        'console_scripts': ['lettuce = lettuce.lettuce_cli:main'],
-    },
+    entry_points = {
+    	'console_scripts' : [
+	    'lettuce = lettuce.lettuce_cli:main',
+	]}
 )

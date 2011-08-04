@@ -16,7 +16,6 @@ Lettuce documentation contents
    tutorial/multiline
    tutorial/scenario-outlines
    tutorial/steps-from-step-definitions
-   reference/cli
    reference/features
    reference/terrain
    reference/languages
