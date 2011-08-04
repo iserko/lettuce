@@ -32,6 +32,7 @@ from lettuce.exceptions import LettuceSyntaxError
 
 fs = FileSystem()
 
+
 class HashList(list):
     __base_msg = 'The step "%s" have no table defined, so ' \
         'that you can\'t use step.hashes.%s'
@@ -64,6 +65,7 @@ class HashList(list):
 
         raise AssertionError(self.__base_msg % (self.step.sentence, 'last'))
 
+
 class Language(object):
     code = 'en'
     name = 'English'
@@ -73,6 +75,7 @@ class Language(object):
     examples = 'Examples|Scenarios'
     scenario_outline = 'Scenario Outline'
     scenario_separator = 'Scenario( Outline)?'
+
     def __init__(self, code=u'en'):
         self.code = code
         for attr, value in languages.LANGUAGES[code].items():
@@ -98,6 +101,7 @@ class Language(object):
 
         return instance
 
+
 class StepDefinition(object):
     """A step definition is a wrapper for user-defined callbacks. It
     gets a few metadata from file, such as filename and line number"""
@@ -122,6 +126,7 @@ class StepDefinition(object):
 
         return ret
 
+
 class StepDescription(object):
     """A simple object that holds filename and line number of a step
     description (step within feature file)"""
@@ -131,6 +136,7 @@ class StepDescription(object):
             self.file = fs.relpath(self.file)
 
         self.line = line
+
 
 class ScenarioDescription(object):
     """A simple object that holds filename and line number of a scenario
@@ -145,6 +151,7 @@ class ScenarioDescription(object):
             if re.match(u"%s: " % language.scenario_separator + re.escape(scenario.name), part):
                 self.line = pline + 1
                 break
+
 
 class FeatureDescription(object):
     """A simple object that holds filename and line number of a feature
@@ -167,6 +174,7 @@ class FeatureDescription(object):
                         described_at.append(line)
 
         self.description_at = tuple(described_at)
+
 
 class Step(object):
     """ Object that represents each step on feature files."""
@@ -198,8 +206,8 @@ class Step(object):
         method_name = sentence
 
         groups = [
-            ('"', re.compile(r'("[^"]+")')), # double quotes
-            ("'", re.compile(r"('[^']+')")), # single quotes
+            ('"', re.compile(r'("[^"]+")')),  # double quotes
+            ("'", re.compile(r"('[^']+')")),  # single quotes
         ]
 
         attribute_names = []
@@ -217,14 +225,11 @@ class Step(object):
                     method_name = method_name.replace(match, group_name)
                     attribute_names.append(group_name)
 
-
-
         method_name = unicodedata.normalize('NFKD', method_name) \
                       .encode('ascii', 'ignore')
         method_name = '%s(step%s)' % (
             "_".join(re.findall("\w+", method_name)).lower(),
-            attribute_names and (", %s" % ", ".join(attribute_names)) or ""
-        )
+            attribute_names and (", %s" % ", ".join(attribute_names)) or "")
 
         return method_name, sentence
 
@@ -232,6 +237,7 @@ class Step(object):
         sentence = self.sentence
         hashes = self.hashes[:]  # deep copy
         for k, v in data.items():
+
             def evaluate(stuff):
                 return stuff.replace(u'<%s>' % unicode(k), unicode(v))
 
@@ -252,7 +258,7 @@ class Step(object):
     def _calc_list_length(self, lst):
         length = self.table_indentation + 2
         for item in lst:
-            length += len(item) + 2
+            length += strings.column_width(item) + 2
 
         if len(lst) > 1:
             length += 1
@@ -267,8 +273,10 @@ class Step(object):
 
     @property
     def max_length(self):
-        max_length_sentence = len(self.sentence) + self.indentation
-        max_length_original = len(self.original_sentence) + self.indentation
+        max_length_sentence = strings.column_width(self.sentence) + \
+            self.indentation
+        max_length_original = strings.column_width(self.original_sentence) + \
+            self.indentation
 
         max_length = max([max_length_original, max_length_sentence])
         for data in self.hashes:
@@ -385,7 +393,7 @@ class Step(object):
         return True
 
     @staticmethod
-    def run_all(steps, outline = None, run_callbacks = False, ignore_case = True):
+    def run_all(steps, outline=None, run_callbacks=False, ignore_case=True):
         """Runs each step in the given list of steps.
 
         Returns a tuple of five lists:
@@ -432,7 +440,7 @@ class Step(object):
         return (all_steps, steps_passed, steps_failed, steps_undefined, reasons_to_fail)
 
     @classmethod
-    def many_from_lines(klass, lines, filename = None, original_string = None):
+    def many_from_lines(klass, lines, filename=None, original_string=None):
         """Parses a set of steps from lines of input.
 
         This will correctly parse and produce a list of steps from lines without
@@ -488,10 +496,10 @@ class Step(object):
 class RunController(object):
     def __init__(self):
         self.delegates = []
-        
+
     def add(self, delegate):
         self.delegates.append(delegate)
-        
+
     def want_run_scenario(self, scenario):
         for delegate in self.delegates:
             if not delegate.want_run_scenario(scenario):
@@ -531,7 +539,7 @@ class Scenario(object):
     described_at = None
     indentation = 2
     table_indentation = indentation + 2
-    
+
     def __init__(self, name, remaining_lines, keys, outlines, with_file=None,
                  original_string=None, language=None, tags=None):
 
@@ -566,7 +574,7 @@ class Scenario(object):
         else:
             prefix = self.language.first_of_scenario + ":"
 
-        max_length = len(u"%s %s" % (prefix, self.name)) + self.indentation
+        max_length = strings.column_width(u"%s %s" % (prefix, self.name)) + self.indentation
 
         for step in self.steps:
             if step.max_length > max_length:
@@ -650,9 +658,8 @@ class Scenario(object):
 
             steps_skipped = filter(skip, all_steps)
             if outline:
-                call_hook(
-                    'outline', 'scenario', self, order, outline, reasons_to_fail
-                )
+                call_hook('outline', 'scenario', self, order, outline,
+                        reasons_to_fail)
 
             return ScenarioResult(
                 self,
@@ -660,8 +667,7 @@ class Scenario(object):
                 steps_failed,
                 steps_skipped,
                 steps_undefined,
-                True
-            )
+                True)
 
         if self.outlines:
             first = True
@@ -722,7 +728,7 @@ class Scenario(object):
         """ Creates a new scenario from string"""
         tags = tags or []
         tags = tags[:]
-        
+
         # ignoring comments
         no_comments = strings.get_stripped_lines(string, ignore_lines_starting_with='#')
         # extract tags
@@ -755,14 +761,15 @@ class Scenario(object):
             with_file=with_file,
             original_string=original_string,
             language=language,
-            tags=tags
-        )
+            tags=tags)
 
         return scenario
+
 
 class Feature(object):
     """ Object that represents a feature."""
     described_at = None
+
     def __init__(self, name, remaining_lines, with_file, original_string,
                  language=None, tags=None):
 
@@ -776,8 +783,7 @@ class Feature(object):
         self.scenarios, self.description = self._parse_remaining_lines(
             remaining_lines,
             original_string,
-            with_file
-        )
+            with_file)
 
         self.original_string = original_string
 
@@ -792,9 +798,9 @@ class Feature(object):
 
     @property
     def max_length(self):
-        max_length = len(u"%s: %s" % (self.language.first_of_feature, self.name))
+        max_length = strings.column_width(u"%s: %s" % (self.language.first_of_feature, self.name))
         for line in self.description.splitlines():
-            length = len(line.strip()) + Scenario.indentation
+            length = strings.column_width(line.strip()) + Scenario.indentation
             if length > max_length:
                 max_length = length
 
@@ -839,17 +845,12 @@ class Feature(object):
         found = len(re.findall(r'%s:[ ]*\w+' % language.feature, "\n".join(lines), re.U))
 
         if found > 1:
-            raise LettuceSyntaxError(
-                with_file,
-                'A feature file must contain ONLY ONE feature!'
-            )
+            raise LettuceSyntaxError(with_file,
+                'A feature file must contain ONLY ONE feature!')
 
         elif found == 0:
-            raise LettuceSyntaxError(
-                with_file,
-                'Features must have a name. e.g: "Feature: This is my name"'
-            )
-
+            raise LettuceSyntaxError(with_file,
+                'Features must have a name. e.g: "Feature: This is my name"')
 
         while lines:
             matched = re.search(r'%s:(.*)' % language.feature, lines[0], re.I)
@@ -896,15 +897,12 @@ class Feature(object):
 
         parts = strings.split_scenarios(lines, scenario_prefix)
 
-        scenario_strings = [
-            u"%s" % (s) for s in parts if s.strip()
-        ]
+        scenario_strings = [u"%s" % (s) for s in parts if s.strip()]
         kw = dict(
             original_string=original_string,
             with_file=with_file,
             language=self.language,
-            tags=self.tags
-        )
+            tags=self.tags)
 
         scenarios = [Scenario.from_string(s, **kw) for s in scenario_strings]
 
@@ -930,6 +928,7 @@ class Feature(object):
         call_hook('after_each', 'feature', self)
         return FeatureResult(self, *scenarios_ran)
 
+
 class FeatureResult(object):
     """Object that holds results of each scenario ran from within a feature"""
     def __init__(self, feature, *scenario_results):
@@ -939,6 +938,7 @@ class FeatureResult(object):
     @property
     def passed(self):
         return all([result.passed for result in self.scenario_results])
+
 
 class ScenarioResult(object):
     """Object that holds results of each step ran from within a scenario"""
@@ -964,6 +964,7 @@ class ScenarioResult(object):
     def failed(self):
         return len(self.steps_failed) > 0
 
+
 class TotalResult(object):
     def __init__(self, feature_results):
         self.feature_results = feature_results
@@ -971,7 +972,7 @@ class TotalResult(object):
         self.steps_passed = 0
         self.steps_failed = 0
         self.steps_skipped = 0
-        self.steps_undefined= 0
+        self.steps_undefined = 0
         self._proposed_definitions = []
         self.steps = 0
         for feature_result in self.feature_results:
@@ -983,7 +984,6 @@ class TotalResult(object):
                 self.steps_undefined += len(scenario_result.steps_undefined)
                 self.steps += scenario_result.total_steps
                 self._proposed_definitions.extend(scenario_result.steps_undefined)
-
 
     def _filter_proposed_definitions(self):
         sentences = []
@@ -1011,7 +1011,7 @@ class TotalResult(object):
     @property
     def scenarios_ran(self):
         return len([res for res in self.scenario_results if res.was_run])
-    
+
     @property
     def scenarios_not_run(self):
         return len([result for result in self.scenario_results if not result.was_run])

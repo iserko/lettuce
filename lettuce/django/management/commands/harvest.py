@@ -28,6 +28,7 @@ from lettuce import registry
 from lettuce.django import server
 from lettuce.django import harvest_lettuces
 
+
 class Command(BaseCommand):
     help = u'Run lettuce tests all along installed apps'
     args = '[PATH to feature file or folder]'
@@ -62,6 +63,7 @@ class Command(BaseCommand):
         make_option('--no-waits', action='store_true', dest='no_waits', default=False,
                     help="Don't use explicit waits in the tests"),
     )
+
     def stopserver(self, failed=False):
         raise SystemExit(int(failed))
 
@@ -74,7 +76,7 @@ class Command(BaseCommand):
             else:
                 paths = args
         else:
-            paths = harvest_lettuces(apps_to_run, apps_to_avoid) # list of tuples with (path, app_module)
+            paths = harvest_lettuces(apps_to_run, apps_to_avoid)  # list of tuples with (path, app_module)
 
         return paths
 

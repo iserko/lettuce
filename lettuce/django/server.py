@@ -21,7 +21,7 @@ import socket
 import httplib
 import urlparse
 import tempfile
-import threading
+import multiprocessing
 
 from StringIO import StringIO
 
@@ -32,51 +32,55 @@ from django.core.servers.basehttp import ServerHandler
 from django.core.servers.basehttp import WSGIRequestHandler
 from django.core.servers.basehttp import WSGIServerException
 from django.core.servers.basehttp import AdminMediaHandler
+try:
+    from django.contrib.staticfiles.handlers import StaticFilesHandler
+except ImportError:
+    StaticFilesHandler = None
+
+try:
+    import SocketServer
+    SocketServer.BaseServer.handle_error = lambda *args, **kw: None
+except ImportError:
+    pass
 
 from lettuce.registry import call_hook
+
 
 class LettuceServerException(WSGIServerException):
     pass
 
 keep_running = True
-class StopabbleHandler(object):
-    """WSGI middleware that intercepts HTTP method DELETE at / and
-    kills through StopIteration exception server"""
 
-    def __init__(self, application):
-        self.application = application
-
-    def __call__(self, environ, start_response):
-        if environ['PATH_INFO'] == '/' and environ['REQUEST_METHOD'] == 'DELETE':
-            global keep_running
-            keep_running = False
-
-        return self.application(environ, start_response)
 
 class MutedRequestHandler(WSGIRequestHandler):
     """ A RequestHandler that silences output, in order to don't
     mess with Lettuce's output"""
 
     dev_null = StringIO()
+
     def log_message(self, *args, **kw):
-        pass # do nothing
+        pass  # do nothing
 
     def handle(self):
         """Handle a single HTTP request"""
         self.raw_requestline = self.rfile.readline()
-        if not self.parse_request(): # An error code has been sent, just exit
+        if not self.parse_request():  # An error code has been sent, just exit
             return
 
         handler = LettuceServerHandler(
             self.rfile,
             self.wfile,
             self.dev_null,
-            self.get_environ()
+            self.get_environ(),
         )
         handler.request_handler = self      # backpointer for logging
         handler.run(self.server.get_app())
 
+
 class LettuceServerHandler(ServerHandler):
+    def handle_error(self, request, client_address):
+        pass
+
     def finish_response(self):
         try:
             ServerHandler.finish_response(self)
@@ -85,17 +89,19 @@ class LettuceServerHandler(ServerHandler):
         # http://code.djangoproject.com/ticket/4444
         except Exception:
             exc_type, exc_value = sys.exc_info()[:2]
-            if not issubclass(exc_type, socket.error) or exc_value.args[0] is 32:
+            if not issubclass(exc_type, socket.error) or \
+                   exc_value.args[0] is 32:
                 raise
 
-class ThreadedServer(threading.Thread):
+
+class ThreadedServer(multiprocessing.Process):
     """
     Runs django's builtin in background
     """
-    lock = threading.Lock()
+    lock = multiprocessing.Lock()
 
     def __init__(self, address, port, *args, **kw):
-        threading.Thread.__init__(self)
+        multiprocessing.Process.__init__(self)
         self.address = address
         self.port = port
 
@@ -120,6 +126,14 @@ class ThreadedServer(threading.Thread):
             break
 
         self.lock.acquire()
+
+    def should_serve_static_files(self):
+        return (StaticFilesHandler is not None and
+                getattr(settings, 'STATIC_URL', False))
+
+    def should_serve_admin_media(self):
+        return ('django.contrib.admin' in settings.INSTALLED_APPS or
+                getattr(settings, 'LETTUCE_SERVE_ADMIN_MEDIA', False))
 
     def run(self):
         self.lock.acquire()
@@ -161,15 +175,16 @@ class ThreadedServer(threading.Thread):
         if not bound:
             raise LettuceServerException(
                 "the port %d already being used, could not start " \
-                "django's builtin server on it" % self.port
+                "django's builtin server on it" % self.port,
             )
 
-
-        handler = StopabbleHandler(WSGIHandler())
-        if 'django.contrib.admin' in settings.INSTALLED_APPS:
+        handler = WSGIHandler()
+        if self.should_serve_admin_media():
             admin_media_path = ''
             handler = AdminMediaHandler(handler, admin_media_path)
-            print "Preparing to serve django's admin site static files..."
+
+        if self.should_serve_static_files():
+            handler = StaticFilesHandler(handler)
 
         httpd.set_app(handler)
 
@@ -178,8 +193,11 @@ class ThreadedServer(threading.Thread):
             call_hook('before', 'handle_request', httpd, self)
             httpd.handle_request()
             call_hook('after', 'handle_request', httpd, self)
-            if self.lock.locked():
+            try:
                 self.lock.release()
+            except ValueError:
+                pass
+
 
 class Server(object):
     """A silenced, lightweight and simple django's builtin server so
@@ -194,7 +212,13 @@ class Server(object):
     def start(self):
         """Starts the webserver thread, and waits it to be available"""
         call_hook('before', 'runserver', self._actual_server)
-        self._actual_server.setDaemon(True)
+        if self._actual_server.should_serve_admin_media():
+            msg = "Preparing to serve django's admin site static files"
+            if getattr(settings, 'LETTUCE_SERVE_ADMIN_MEDIA', False):
+                msg += ' (as per settings.LETTUCE_SERVE_ADMIN_MEDIA=True)'
+
+            print "%s..." % msg
+
         self._actual_server.start()
         self._actual_server.wait()
 
@@ -202,17 +226,13 @@ class Server(object):
         print "Django's builtin server is running at %s:%d" % addrport
 
     def stop(self, fail=False):
-        http = httplib.HTTPConnection(self.address, self.port)
-        try:
-            http.request("DELETE", "/")
-            http.getresponse().read()
-        except socket.error:
-            pass
-        finally:
-            http.close()
-            code = int(fail)
-            call_hook('after', 'runserver', self._actual_server)
-            return sys.exit(code)
+        pid = self._actual_server.pid
+        if pid:
+            os.kill(pid, 9)
+
+        code = int(fail)
+        call_hook('after', 'runserver', self._actual_server)
+        return sys.exit(code)
 
     def url(self, url=""):
         base_url = "http://%s" % ThreadedServer.get_real_address(self.address)

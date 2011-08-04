@@ -42,7 +42,7 @@ Let's choose a problem to lettuce:
 project structure
 =================
 
-Build the directory tree bellow such as the files `zero.feature` and `steps.py` are empty.
+Build the directory tree bellow such as the files ``zero.feature`` and ``steps.py`` are empty.
 
 .. highlight:: bash
 
@@ -66,7 +66,7 @@ first round
 [a] describe behaviour
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Start describing the expected behaviour of factorial in `zero.feature` using English:
+Start describing the expected behaviour of factorial in ``zero.feature`` using English:
 
 .. highlight:: ruby
 
@@ -91,7 +91,7 @@ Start describing the expected behaviour of factorial in `zero.feature` using Eng
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Now let's define the steps of the scenario, so Lettuce can
-understand the behaviour description. Create the `steps.py` file which will contain 
+understand the behaviour description. Create the ``steps.py`` file which will contain 
 python code describing the steps.
 
 Python:
@@ -121,8 +121,8 @@ Python:
 
 .. Note::
 
-   `steps.py` must be inside features directory, but the names doesn't
-   need to be `steps.py` it can be any python file with a `.py` extension.
+   ``steps.py`` must be inside features directory, but the names doesn't
+   need to be ``steps.py`` it can be any python file with a ``.py`` extension.
    Lettuce_ will look for python files recursively within features
    dir.
 
@@ -412,9 +412,3 @@ All steps should be repeated as long as you can keep doing them - the
 quality of your software depends on these.
 
 Have a nice lettuce...! ;)
-
-.. _Lettuce: http://lettuce.it
-.. _Python: http://python.org
-.. _Cucumber: http://cukes.info
-.. _Ruby: http://ruby-lang.org/
-.. _BDD: http://en.wikipedia.org/wiki/Behavior_Driven_Development
