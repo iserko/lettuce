@@ -43,7 +43,7 @@ def enable(filename=None):
 
     @after.each_step
     def create_test_case(step):
-        classname = "tests.lettuce.%s.%s" % (os.path.basename(step.scenario.with_file), step.scenario.name[:10].replace(" ", '_').replace('.', '_')
+        classname = "tests.lettuce.%s.%s" % (os.path.basename(step.scenario.with_file), step.scenario.name[:10].replace(" ", '_').replace('.', '_'))
         tc = doc.createElement("testcase")
         tc.setAttribute("classname", classname)
         tc.setAttribute("name", step.sentence[:15].replace(' ', '_').replace('.', '_'))
