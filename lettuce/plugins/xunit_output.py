@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os.path
 import sys
 from datetime import datetime
 from lettuce.terrain import after
@@ -42,10 +43,10 @@ def enable(filename=None):
 
     @after.each_step
     def create_test_case(step):
-        classname = "tests.lettuce.%s.%s" % (os.path.basename(step.scenario.with_file), step.scenario.name[:10].replace(" ", '_'))
+        classname = "tests.lettuce.%s.%s" % (os.path.basename(step.scenario.with_file), step.scenario.name[:10].replace(" ", '_').replace('.', '_')
         tc = doc.createElement("testcase")
         tc.setAttribute("classname", classname)
-        tc.setAttribute("name", step.sentence[:15])
+        tc.setAttribute("name", step.sentence[:15].replace(' ', '_').replace('.', '_'))
         tc.setAttribute("time", str(total_seconds((datetime.now() - step.started))))
 
         if step.failed:
