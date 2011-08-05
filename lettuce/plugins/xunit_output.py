@@ -42,10 +42,10 @@ def enable(filename=None):
 
     @after.each_step
     def create_test_case(step):
-        classname = "%s : %s" % (step.scenario.feature.name, step.scenario.name)
+        classname = "tests.lettuce.%s.%s" % (os.path.basename(step.scenario.with_file), step.scenario.name[:10].replace(" ", '_'))
         tc = doc.createElement("testcase")
         tc.setAttribute("classname", classname)
-        tc.setAttribute("name", step.sentence)
+        tc.setAttribute("name", step.sentence[:15])
         tc.setAttribute("time", str(total_seconds((datetime.now() - step.started))))
 
         if step.failed:
@@ -63,4 +63,3 @@ def enable(filename=None):
         root.setAttribute("failed", str(total.steps_failed))
         doc.appendChild(root)
         wrt_output(output_filename, doc.toxml())
-
