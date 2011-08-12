@@ -24,6 +24,7 @@ from lettuce.terrain import before
 
 def wrt(what):
     sys.stdout.write(what.encode('utf-8'))
+    sys.stdout.flush()
 
 @after.each_step
 def print_step_running(step):
@@ -128,4 +129,3 @@ def print_no_features_found(where):
         'could not find features at '
         '%s\n' % where
     )
-
