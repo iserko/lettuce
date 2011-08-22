@@ -59,8 +59,8 @@ class Command(BaseCommand):
         make_option('--xunit-file', action='store', dest='xunit_file', default=None,
             help='Write JUnit XML to this file. Defaults to lettucetests.xml'),
 
-        make_option('--no-waits', action='store_true', dest='no_waits', default=False,
-                    help="Don't use explicit waits in the tests"),
+        make_option('--wait', dest='wait', default=None,
+                    help="Explicitly wait in the tests for x seconds"),
     )
     def stopserver(self, failed=False):
         raise SystemExit(int(failed))
@@ -87,6 +87,7 @@ class Command(BaseCommand):
         apps_to_run = tuple(options.get('apps', '').split(","))
         apps_to_avoid = tuple(options.get('avoid_apps', '').split(","))
         run_server = not options.get('no_server', False)
+        wait = float(options.get('wait', 0))
 
         paths = self.get_paths(args, apps_to_run, apps_to_avoid)
         if run_server:
@@ -111,7 +112,7 @@ class Command(BaseCommand):
                 runner = Runner(path, options.get('scenarios'), verbosity,
                                 enable_xunit=options.get('enable_xunit'),
                                 xunit_filename=options.get('xunit_file'),
-                                no_waits=options.get('no_waits'))
+                                wait=wait)
                 result = runner.run()
                 if app_module is not None:
                     registry.call_hook('after_each', 'app', app_module, result)

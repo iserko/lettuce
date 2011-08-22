@@ -64,7 +64,7 @@ class Runner(object):
     def __init__(self, base_path, scenarios=None, verbosity=0,
                  enable_xunit=False, xunit_filename=None,
                  run_controller=None,
-                 no_waits=False):
+                 wait=None):
         """ lettuce.Runner will try to find a terrain.py file and
         import it from within `base_path`
         """
@@ -78,7 +78,7 @@ class Runner(object):
         self.loader = fs.FeatureLoader(base_path)
         self.verbosity = verbosity
         world.verbosity = verbosity
-        world.no_waits = no_waits
+        world.wait = wait
         self.run_controller = run_controller or RunController()
         self.scenarios = scenarios and map(int, scenarios.split(",")) or None
 
