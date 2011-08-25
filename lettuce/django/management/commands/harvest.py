@@ -87,7 +87,10 @@ class Command(BaseCommand):
         apps_to_run = tuple(options.get('apps', '').split(","))
         apps_to_avoid = tuple(options.get('avoid_apps', '').split(","))
         run_server = not options.get('no_server', False)
-        wait = float(options.get('wait', 0))
+        try:
+            wait = float(options.get('wait', 0))
+        except:
+            wait = 0
 
         paths = self.get_paths(args, apps_to_run, apps_to_avoid)
         if run_server:
