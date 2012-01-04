@@ -103,6 +103,7 @@ class Command(BaseCommand):
 
         registry.call_hook('before', 'harvest', locals())
         results = []
+        exit_code = 0
         try:
             for path in paths:
                 app_module = None
@@ -124,13 +125,14 @@ class Command(BaseCommand):
                 if not result or result.steps != result.steps_passed:
                     failed = True
         except SystemExit, e:
-            sys.stderr.write("Exiting with code %s\n" % e.code)
-            raise
+            exit_code = e.code
         except Exception, e:
             import traceback
             traceback.print_exc(e)
 
         finally:
             registry.call_hook('after', 'harvest', results)
-            server.stop(failed)
             teardown_test_environment()
+            if failed and exit_code == 0:
+                exit_code = 1
+            server.stop(exit_code)
