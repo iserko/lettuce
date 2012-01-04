@@ -166,6 +166,8 @@ def consume_tags_lines(lines, tags):
     """consumes lines from start of given set of lines and
        populates tags array,
        stops when run out of lines that are tag lines"""
+    if not lines:
+        return
     while True:
         line = lines[0]
         tags_on_lines = extract_tags_from_line(line)
