@@ -845,6 +845,7 @@ class Feature(object):
             )
 
         elif found == 0:
+            return None
             raise LettuceSyntaxError(
                 with_file,
                 'Features must have a name. e.g: "Feature: This is my name"'

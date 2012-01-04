@@ -129,7 +129,8 @@ class Runner(object):
         try:
             for filename in features_files:
                 feature = Feature.from_file(filename)
-                results.append(feature.run(self.scenarios, self.run_controller))
+                if feature:
+                    results.append(feature.run(self.scenarios, self.run_controller))
         except exceptions.LettuceSyntaxError, e:
             sys.stderr.write(e.msg)
             failed = True
