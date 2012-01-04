@@ -123,7 +123,9 @@ class Command(BaseCommand):
                 results.append(result)
                 if not result or result.steps != result.steps_passed:
                     failed = True
-
+        except SystemExit, e:
+            sys.stderr.write("Exiting with code %s\n" % e.code)
+            raise
         except Exception, e:
             import traceback
             traceback.print_exc(e)
